@@ -46,7 +46,7 @@ TEST(LCATest, SimpleTests)
 
 TEST(LCATest, NullTests)
 {
-    /* Root null and other null nodes. */
+    /* Root null. */
     Node *root = NULL;
     EXPECT_EQ(findLCA(root, 100, 2), -1);
     EXPECT_EQ(findLCA(root, 20, 1), -1);
@@ -54,7 +54,7 @@ TEST(LCATest, NullTests)
 
 TEST(LCATest, SameTests)
 {
-    /* Check for LCA of same node. */
+    /* Check for LCA of same node with itself. */
     Node *root = buildTestTree();
     EXPECT_EQ(findLCA(root, 9, 9), 9);
     EXPECT_EQ(findLCA(root, 6, 6), 6);

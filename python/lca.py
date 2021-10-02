@@ -2,7 +2,7 @@ class Node:
     def __init__(self, key):
         self.key = key
         self.left = None
-        self.right = None
+        self.right = None   
 
 def findPath(root, path, k):
     if root is None:
@@ -35,16 +35,15 @@ def findLCA(root, k1, k2):
 
     return p1[i-1]
 
-root = Node(0)
-root.left = Node(2)
-root.left.left = Node(8)
-root.left.right = Node(5)
-root.left.right.left = Node(6)
-root.left.right.right = Node(7)
-root.right = Node(1)
-root.right.right = Node(9)
-root.right.right.right = Node(3)
-root.right.right.right.right = Node(4)
- 
-print("LCA(6, 7) = %d" %(findLCA(root, 6, 7,)))
-print("LCA(6, 4) = %d" %(findLCA(root, 6, 4)))
+def buildTree():
+    root = Node(0)
+    root.left = Node(2)
+    root.left.left = Node(8)
+    root.left.right = Node(5)
+    root.left.right.left = Node(6)
+    root.left.right.right = Node(7)
+    root.right = Node(1)
+    root.right.right = Node(9)
+    root.right.right.right = Node(3)
+    root.right.right.right.right = Node(4)
+    return root
