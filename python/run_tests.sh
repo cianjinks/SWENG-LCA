@@ -1,0 +1,1 @@
+python3 ./lca_test.py
