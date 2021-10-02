@@ -17,7 +17,7 @@ void deleteTree(Node *root)
 }
 
 /* Some test binary trees. */
-Node *buildTestTree1()
+Node *buildTestTree()
 {
     Node *root = new Node(0);
     root->left = new Node(2);
@@ -36,7 +36,7 @@ Node *buildTestTree1()
 TEST(LCATest, SimpleTests)
 {
     /* No strange edge cases. */
-    Node *root = buildTestTree1();
+    Node *root = buildTestTree();
     EXPECT_EQ(findLCA(root, 6, 7), 5);
     EXPECT_EQ(findLCA(root, 8, 7), 2);
     EXPECT_EQ(findLCA(root, 8, 3), 0);
@@ -44,10 +44,30 @@ TEST(LCATest, SimpleTests)
     deleteTree(root);
 }
 
+TEST(LCATest, NullTests)
+{
+    /* Root null and other null nodes. */
+    Node *root = NULL;
+    EXPECT_EQ(findLCA(root, 100, 2), -1);
+    EXPECT_EQ(findLCA(root, 20, 1), -1);
+}
+
+TEST(LCATest, SameTests)
+{
+    /* Check for LCA of same node. */
+    Node *root = buildTestTree();
+    EXPECT_EQ(findLCA(root, 9, 9), 9);
+    EXPECT_EQ(findLCA(root, 6, 6), 6);
+    EXPECT_EQ(findLCA(root, 4, 4), 4);
+    deleteTree(root);
+
+    /* Note: Binary tree will not contain duplicate keys. No need to test. */
+}
+
 TEST(LCATest, ParentTests)
 {
     /* If 3 is the parent node of 4 what is the LCA? I would say 3 is. */
-    Node *root = buildTestTree1();
+    Node *root = buildTestTree();
     EXPECT_EQ(findLCA(root, 3, 4), 3);
     EXPECT_EQ(findLCA(root, 9, 3), 9);
     deleteTree(root);
