@@ -2,44 +2,34 @@
 
 #include "lca.h"
 
-/* Free memory of a binary tree. */
-void deleteBinaryTree(Node *root)
-{
-    if (root == NULL)
-    {
-        return;
-    }
-
-    deleteBinaryTree(root->left);
-    deleteBinaryTree(root->right);
-
-    delete root;
-}
-
-/* Some test binary trees. */
-Node *buildTestBinaryTree()
+/* Test binary tree. */
+std::vector<Node *> buildTestBinaryTree()
 {
     Node *root = new Node(0);
-    root->left = new Node(2);
-    root->left->left = new Node(8);
-    root->left->right = new Node(5);
-    root->left->right->left = new Node(6);
-    root->left->right->right = new Node(7);
-    root->right = new Node(1);
-    root->right->right = new Node(9);
-    root->right->right->right = new Node(3);
-    root->right->right->right->right = new Node(4);
-    return root;
+    root->nodes.push_back(new Node(2));                               // root->left = new Node(2);
+    root->nodes[0]->nodes.push_back(new Node(8));                     // root->left->left = new Node(8);
+    root->nodes[0]->nodes.push_back(new Node(5));                     // root->left->right = new Node(5);
+    root->nodes[0]->nodes[1]->nodes.push_back(new Node(6));           // root->left->right->left = new Node(6);
+    root->nodes[0]->nodes[1]->nodes.push_back(new Node(7));           // root->left->right->right = new Node(7);
+    root->nodes.push_back(new Node(1));                               // root->right = new Node(1);
+    root->nodes[1]->nodes.push_back(new Node(9));                     // root->right->right = new Node(9);
+    root->nodes[1]->nodes[0]->nodes.push_back(new Node(3));           // root->right->right->right = new Node(3);
+    root->nodes[1]->nodes[0]->nodes[0]->nodes.push_back(new Node(4)); // root->right->right->right->right = new Node(4);
+
+    std::vector<Node *> top_parents;
+    top_parents.push_back(root);
+    return top_parents;
 }
 
-std::vector<DAGNode *> buildTestDAG()
+/* DAGS can have multiple "roots" so return value is vector of roots. */
+std::vector<Node *> buildTestDAG()
 {
     /* https://en.wikipedia.org/wiki/File:Tred-G.svg */
-    DAGNode *a = new DAGNode(1);
-    DAGNode *b = new DAGNode(2);
-    DAGNode *c = new DAGNode(3);
-    DAGNode *d = new DAGNode(4);
-    DAGNode *e = new DAGNode(5);
+    Node *a = new Node(1);
+    Node *b = new Node(2);
+    Node *c = new Node(3);
+    Node *d = new Node(4);
+    Node *e = new Node(5);
     a->nodes.push_back(b);
     a->nodes.push_back(d);
     a->nodes.push_back(c);
@@ -50,11 +40,11 @@ std::vector<DAGNode *> buildTestDAG()
     d->nodes.push_back(e);
 
     /* Added d and e to have extra parent 0. */
-    DAGNode *extra = new DAGNode(0);
+    Node *extra = new Node(0);
     extra->nodes.push_back(d);
     extra->nodes.push_back(e);
 
-    std::vector<DAGNode *> top_parents;
+    std::vector<Node *> top_parents;
     top_parents.push_back(a);
     top_parents.push_back(extra);
     return top_parents;
@@ -64,30 +54,29 @@ std::vector<DAGNode *> buildTestDAG()
 TEST(LCATest, SimpleTests)
 {
     /* No strange edge cases. */
-    Node *root = buildTestBinaryTree();
+    std::vector<Node *> root = buildTestBinaryTree();
     EXPECT_EQ(findLCA(root, 6, 7), 5);
     EXPECT_EQ(findLCA(root, 8, 7), 2);
     EXPECT_EQ(findLCA(root, 8, 3), 0);
     EXPECT_EQ(findLCA(root, 9, 6), 0);
-    deleteBinaryTree(root);
 }
 
 TEST(LCATest, NullTests)
 {
     /* Root null. */
     Node *root = NULL;
-    EXPECT_EQ(findLCA(root, 100, 2), -1);
-    EXPECT_EQ(findLCA(root, 20, 1), -1);
+    std::vector<Node *> top = {root};
+    EXPECT_EQ(findLCA(top, 100, 2), -1);
+    EXPECT_EQ(findLCA(top, 20, 1), -1);
 }
 
 TEST(LCATest, SameTests)
 {
     /* Check for LCA of same node with itself. */
-    Node *root = buildTestBinaryTree();
+    std::vector<Node *> root = buildTestBinaryTree();
     EXPECT_EQ(findLCA(root, 9, 9), 9);
     EXPECT_EQ(findLCA(root, 6, 6), 6);
     EXPECT_EQ(findLCA(root, 4, 4), 4);
-    deleteBinaryTree(root);
 
     /* Note: Binary tree will not contain duplicate keys. No need to test. */
 }
@@ -95,17 +84,18 @@ TEST(LCATest, SameTests)
 TEST(LCATest, ParentTests)
 {
     /* If 3 is the parent node of 4 what is the LCA? I would say 3 is. */
-    Node *root = buildTestBinaryTree();
+    std::vector<Node *> root = buildTestBinaryTree();
     EXPECT_EQ(findLCA(root, 3, 4), 3);
     EXPECT_EQ(findLCA(root, 9, 3), 9);
-    deleteBinaryTree(root);
 }
 
 TEST(LCATest, DagTests)
 {
-    std::vector<DAGNode *> top_parents = buildTestDAG();
-    EXPECT_EQ(findDAGLCA(top_parents, 3, 4), 1); // b and c
-    EXPECT_EQ(findDAGLCA(top_parents, 1, 2), 1); // a and b
-    EXPECT_EQ(findDAGLCA(top_parents, 4, 5), 0); // d and e
-    EXPECT_EQ(findDAGLCA(top_parents, 4, 4), 4); // d and d
+    std::vector<Node *> top_parents = buildTestDAG();
+    EXPECT_EQ(findLCA(top_parents, 3, 4), 3); // b and c
+    // Parent Tests
+    EXPECT_EQ(findLCA(top_parents, 1, 2), 1); // a and b
+    EXPECT_EQ(findLCA(top_parents, 4, 5), 4); // d and e, not 0 because d is parent of e
+    // Same Test
+    EXPECT_EQ(findLCA(top_parents, 4, 4), 4); // d and d
 }
