@@ -92,6 +92,7 @@ TEST(LCATest, ParentTests)
 TEST(LCATest, DagTests)
 {
     std::vector<Node *> top_parents = buildTestDAG();
+    // Simple Test
     EXPECT_EQ(findLCA(top_parents, 3, 4), 3); // b and c
     // Parent Tests
     EXPECT_EQ(findLCA(top_parents, 1, 2), 1); // a and b
