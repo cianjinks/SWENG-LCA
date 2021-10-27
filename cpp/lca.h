@@ -9,7 +9,8 @@ struct Node
     Node(int key);
 };
 
-Node *buildTestTree();
-void deleteTree(Node *root);
+Node *buildBinaryTestTree();
+Node *buildTestDAG();
+void deleteBinaryTree(Node *root);
 bool findPath(Node *root, std::vector<int> &path, int k);
 int findLCA(Node *root, int k1, int k2);

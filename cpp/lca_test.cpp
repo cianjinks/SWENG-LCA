@@ -3,21 +3,21 @@
 #include "lca.h"
 
 /* Free memory of a binary tree. */
-void deleteTree(Node *root)
+void deleteBinaryTree(Node *root)
 {
     if (root == NULL)
     {
         return;
     }
 
-    deleteTree(root->left);
-    deleteTree(root->right);
+    deleteBinaryTree(root->left);
+    deleteBinaryTree(root->right);
 
     delete root;
 }
 
 /* Some test binary trees. */
-Node *buildTestTree()
+Node *buildTestBinaryTree()
 {
     Node *root = new Node(0);
     root->left = new Node(2);
@@ -32,16 +32,20 @@ Node *buildTestTree()
     return root;
 }
 
+Node *buildTestDAG()
+{
+}
+
 /* Unit Tests. */
 TEST(LCATest, SimpleTests)
 {
     /* No strange edge cases. */
-    Node *root = buildTestTree();
+    Node *root = buildTestBinaryTree();
     EXPECT_EQ(findLCA(root, 6, 7), 5);
     EXPECT_EQ(findLCA(root, 8, 7), 2);
     EXPECT_EQ(findLCA(root, 8, 3), 0);
     EXPECT_EQ(findLCA(root, 9, 6), 0);
-    deleteTree(root);
+    deleteBinaryTree(root);
 }
 
 TEST(LCATest, NullTests)
@@ -55,11 +59,11 @@ TEST(LCATest, NullTests)
 TEST(LCATest, SameTests)
 {
     /* Check for LCA of same node with itself. */
-    Node *root = buildTestTree();
+    Node *root = buildTestBinaryTree();
     EXPECT_EQ(findLCA(root, 9, 9), 9);
     EXPECT_EQ(findLCA(root, 6, 6), 6);
     EXPECT_EQ(findLCA(root, 4, 4), 4);
-    deleteTree(root);
+    deleteBinaryTree(root);
 
     /* Note: Binary tree will not contain duplicate keys. No need to test. */
 }
@@ -67,8 +71,8 @@ TEST(LCATest, SameTests)
 TEST(LCATest, ParentTests)
 {
     /* If 3 is the parent node of 4 what is the LCA? I would say 3 is. */
-    Node *root = buildTestTree();
+    Node *root = buildTestBinaryTree();
     EXPECT_EQ(findLCA(root, 3, 4), 3);
     EXPECT_EQ(findLCA(root, 9, 3), 9);
-    deleteTree(root);
+    deleteBinaryTree(root);
 }
